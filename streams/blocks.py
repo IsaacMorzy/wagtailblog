@@ -1,4 +1,4 @@
-"""Streamfields live in here."""
+
 
 from wagtail.core import blocks
 
@@ -15,7 +15,7 @@ class TitleAndTextBlock(blocks.StructBlock):
         label = "Title & Text"
 
 
-class RichtextBlock(blocks.RichTextBlock):
+class RichTextBlock(blocks.RichTextBlock):
     """Richtext with all the features."""
 
     class Meta:  # noqa
@@ -24,7 +24,7 @@ class RichtextBlock(blocks.RichTextBlock):
         label = "Full RichText"
 
 
-class SimpleRichtextBlock(blocks.RichTextBlock):
+class SimpleRichTextBlock(blocks.RichTextBlock):
     """Richtext without (limited) all the features."""
 
     def __init__(

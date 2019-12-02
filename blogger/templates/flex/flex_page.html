@@ -1,9 +1,8 @@
-% extends "base.html" %}
+{% extends "base.html" %}
 {% load wagtailcore_tags %}
 
-
-{% block content %}	{% block content %}
-    {{ self.subtitle }} is the subtitle	    <div class="jumbotron">
+{% block content %}
+    <div class="jumbotron">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12 text-center">
@@ -17,4 +16,4 @@
     {% for block in page.content %}
         {% include_block block %}
     {% endfor %}
-{% endblock %} 	{% endblock %} 
+{% endblock %}
