@@ -1,8 +1,9 @@
 """Blog listing and blog detail pages."""
+from django import forms
 from django.db import models
 from django.shortcuts import render
 
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     StreamFieldPanel,
@@ -74,6 +75,34 @@ class BlogAuthor(models.Model):
 register_snippet(BlogAuthor)
 
 
+class BlogCategory(models.Model):
+    """Blog catgory for a snippet."""
+
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(
+        verbose_name="slug",
+        allow_unicode=True,
+        max_length=255,
+        help_text='A slug to identify posts by this category',
+    )
+
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("slug"),
+    ]
+
+    class Meta:
+        verbose_name = "Blog Category"
+        verbose_name_plural = "Blog Categories"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+register_snippet(BlogCategory)
+
+
 class BlogListingPage(RoutablePageMixin, Page):
     """Listing page lists all the Blog Detail Pages."""
 
@@ -94,6 +123,7 @@ class BlogListingPage(RoutablePageMixin, Page):
         """Adding custom stuff to our context."""
         context = super().get_context(request, *args, **kwargs)
         context["posts"] = BlogDetailPage.objects.live().public()
+        context["categories"] = BlogCategory.objects.all()
         return context
 
     @route(r'^latest/$', name="latest_posts")
@@ -117,7 +147,7 @@ class BlogListingPage(RoutablePageMixin, Page):
 
 
 class BlogDetailPage(Page):
-    """Blog detail page."""
+    """Parental blog detail page."""
 
     custom_title = models.CharField(
         max_length=100,
@@ -125,13 +155,15 @@ class BlogDetailPage(Page):
         null=False,
         help_text='Overwrites the default title',
     )
-    blog_image = models.ForeignKey(
+    banner_image = models.ForeignKey(
         "wagtailimages.Image",
         blank=False,
         null=True,
         related_name="+",
         on_delete=models.SET_NULL,
     )
+
+    categories = ParentalManyToManyField("blog.BlogCategory", blank=True)
 
     content = StreamField(
         [
@@ -147,12 +179,86 @@ class BlogDetailPage(Page):
 
     content_panels = Page.content_panels + [
         FieldPanel("custom_title"),
-        ImageChooserPanel("blog_image"),
+        ImageChooserPanel("banner_image"),
         MultiFieldPanel(
             [
                 InlinePanel("blog_authors", label="Author", min_num=1, max_num=4)
             ],
             heading="Author(s)"
         ),
+        MultiFieldPanel(
+            [
+                FieldPanel("categories", widget=forms.CheckboxSelectMultiple)
+            ],
+            heading="Categories"
+        ),
+        StreamFieldPanel("content"),
+    ] 
+    
+   
+class ArticleBlogPage(BlogDetailPage):
+    """A subclassed blog post page for articles."""
+
+    template = "blog/article_blog_page.html"
+
+    subtitle = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+    intro_image = models.ForeignKey(
+        "wagtailimages.Image",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        help_text='Best size for this image will be 1400x400'
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel("custom_title"),
+        FieldPanel("subtitle"),
+        ImageChooserPanel("banner_image"),
+        ImageChooserPanel("intro_image"),
+        MultiFieldPanel(
+            [
+                InlinePanel("blog_authors", label="Author", min_num=1, max_num=4)
+            ],
+            heading="Author(s)"
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("categories", widget=forms.CheckboxSelectMultiple)
+            ],
+            heading="Categories"
+        ),
         StreamFieldPanel("content"),
     ]
+
+
+# Second subclassed page
+class VideoBlogPage(BlogDetailPage):
+    """A video subclassed page."""
+
+    template = "blog/video_blog_page.html"
+
+    youtube_video_id = models.CharField(max_length=30)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("custom_title"),
+        ImageChooserPanel("banner_image"),
+        MultiFieldPanel(
+            [
+                InlinePanel("blog_authors", label="Author", min_num=1, max_num=4)
+            ],
+            heading="Author(s)"
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("categories", widget=forms.CheckboxSelectMultiple)
+            ],
+            heading="Categories"
+        ),
+        FieldPanel("youtube_video_id"),
+        StreamFieldPanel("content"),
+    ]
+    

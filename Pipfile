@@ -9,6 +9,8 @@ verify_ssl = true
 wagtail = "*"
 django-debug-toolbar = "*"
 flake8 = "*"
+django-extensions = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.7"
