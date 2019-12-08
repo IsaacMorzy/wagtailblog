@@ -124,6 +124,8 @@ class BlogListingPage(RoutablePageMixin, Page):
         context = super().get_context(request, *args, **kwargs)
         context["posts"] = BlogDetailPage.objects.live().public()
         context["categories"] = BlogCategory.objects.all()
+        # "posts" will have child pages; you'll need to use .specific in the template
+        # in order to access child properties, such as youtube_video_id and subtitle
         return context
 
     @route(r'^latest/$', name="latest_posts")
