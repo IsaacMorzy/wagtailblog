@@ -11,6 +11,10 @@ django-debug-toolbar = "*"
 flake8 = "*"
 django-extensions = "*"
 ipython = "*"
+psycopg2 = "*"
+wagtailcolumnblocks = "*"
+django-widget-tweaks = "*"
+wagtail-django-recaptcha = "*"
 
 [requires]
 python_version = "3.7"

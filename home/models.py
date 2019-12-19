@@ -9,11 +9,16 @@ from wagtail.admin.edit_handlers import (
     InlinePanel,
     StreamFieldPanel,
     PageChooserPanel,
+    FieldRowPanel,
 )
 from wagtail.core.models import Page, Orderable
+
+
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
+from wagtail.embeds.blocks import EmbedBlock 
+from wagtail.images.blocks import ImageChooserBlock
 from streams import blocks
 
 
@@ -29,7 +34,31 @@ class HomePageCarouselImages(Orderable):
         related_name="+",
     )
 
-    panels = [ImageChooserPanel("carousel_image")]
+    caption = models.CharField(blank=True, max_length=250)
+    panels = [
+        FieldRowPanel([
+            ImageChooserPanel('carousel_image'),
+            FieldPanel('caption'),
+        ]),
+    ]
+
+
+class SidebarPage(Page):
+    """sidebar page odel"""
+
+    template = "home/sidebar_page.html"
+    head = RichTextField(features=["bold", "italic"])
+    content = StreamField(
+        [
+            ("two_columns", blocks.TwoColumnBlocks()),
+        ],
+        null=True,
+        blank=True,
+    )
+    content_panels = [
+        FieldPanel('head'),
+        StreamFieldPanel('content')
+    ]
 
 
 class HomePage(RoutablePageMixin, Page):
@@ -54,9 +83,25 @@ class HomePage(RoutablePageMixin, Page):
         on_delete=models.SET_NULL,
         related_name="+",
     )
-
-    content = StreamField([("cta", blocks.CTABlock())], null=True, blank=True)
-
+  
+    content = StreamField(
+        [
+            ("title_and_text", blocks.TitleAndTextBlock()),
+            ("full_richtext", blocks.RichtextBlock()),
+            ("simple_richtext", blocks.SimpleRichtextBlock()),
+            ("cards", blocks.CardBlock()),
+            ("cta", blocks.CTABlock()),
+            
+            ("button", blocks.ButtonBlock()),
+            ("two_columns", blocks.TwoColumnBlocks()),
+            ('embedded_video', EmbedBlock(icon="media")),
+            
+            ('image', ImageChooserBlock(icon="image")),
+        ],
+        null=True,
+        blank=True,
+    )
+ 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
@@ -72,6 +117,9 @@ class HomePage(RoutablePageMixin, Page):
             heading="Carousel Images",
         ),
         StreamFieldPanel("content"),
+
+       
+
     ]
 
     class Meta:
@@ -83,3 +131,5 @@ class HomePage(RoutablePageMixin, Page):
     def the_subscribe_page(self, request, *args, **kwargs):
         context = self.get_context(request, *args, **kwargs)
         return render(request, "home/subscribe.html", context)
+
+

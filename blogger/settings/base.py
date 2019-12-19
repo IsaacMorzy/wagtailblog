@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     'streams',
     'site_settings',
     'subscribers',
+    'menus',
+    'contact',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -47,9 +49,11 @@ INSTALLED_APPS = [
     'wagtail.search',
     'wagtail.admin',
     'wagtail.core',
+    'wagtailcolumnblocks',
 
     'modelcluster',
     'taggit',
+    'widget_tweaks',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -58,6 +62,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
+
+    'captcha',
+    'wagtailcaptcha',
 ]
 
 MIDDLEWARE = [
@@ -102,11 +109,14 @@ WSGI_APPLICATION = 'blogger.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'blog',
+        'USER': 'bloguser',
+        'PASSWORD': 'blogger',
+        'HOST': 'localhost',
+        'PORT': '5433',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -172,3 +182,11 @@ WAGTAIL_SITE_NAME = "blogger"
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
 BASE_URL = 'http://example.com'
+
+
+# Recaptcha settings
+# This key only allows localhost. For production, you'll want your own API keys.
+# You can get Recaptcha API key from google.com/recaptcha
+RECAPTCHA_PUBLIC_KEY = "6LdyjcgUAAAAADMCOzhNxq4U3nQdfdKz_rxerNxf"
+RECAPTCHA_PRIVATE_KEY = "6LdyjcgUAAAAALwTv77xOTPzxWb7PgzJ7yFyHh1D"
+NOCAPTCHA = True

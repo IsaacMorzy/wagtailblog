@@ -2,6 +2,7 @@
 
 from wagtail.core import blocks
 from wagtail.images.blocks import ImageChooserBlock
+from wagtailcolumnblocks.blocks import ColumnsBlock
 
 
 class TitleAndTextBlock(blocks.StructBlock):
@@ -99,6 +100,7 @@ class ButtonBlock(blocks.StructBlock):
     """An external or internal URL."""
 
     button_page = blocks.PageChooserBlock(required=False, help_text='If selected, this url will be used first')
+
     button_url = blocks.URLBlock(required=False, help_text='If added, this url will be used secondarily to the button page')
 
     # def get_context(self, request, *args, **kwargs):
@@ -111,3 +113,31 @@ class ButtonBlock(blocks.StructBlock):
         icon = "placeholder"
         label = "Single Button"
         value_class = LinkStructValue
+
+
+class ContentBlocks(blocks.StreamBlock):
+    """ The blocks you want to allow within each TwoColumnBlock column."""
+    heading = blocks.CharBlock(required=False,classname="full title")
+    paragraph = blocks.RichTextBlock()
+    image = ImageChooserBlock()
+
+ 
+class TwoColumnBlocks(blocks.StreamBlock):
+    """
+    All the root level blocks you can use
+    """
+    column_2_1 = ColumnsBlock(
+        # Blocks you want to allow within each column
+        ContentBlocks(),
+        # Two columns in admin, first twice as wide as the second
+        ratios=(2, 1),
+        # Used for grouping related fields in the streamfield field picker
+        group="Columns",
+        # 12 column frontend grid (this is the default, so can be omitted)
+        grid_width=12,
+        # Override the frontend template
+        template = 'streams/two_column_block.html',
+
+    )
+
+
