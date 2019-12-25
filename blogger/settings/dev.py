@@ -27,6 +27,17 @@ INTERNAL_IPS = (
     '172.17.0.1 '
 )
 
+# Uncomment this line to enable template caching
+#Dont forget to change the LOCATION path
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "/home/zack/Documents/Python/django/wagtail/blog/blogger/blogger/cache"
+
+    }
+}
+
+
 try:
     from .local import *
 except ImportError:
