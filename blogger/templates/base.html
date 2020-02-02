@@ -46,7 +46,15 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="nav-item">
+                    {% cache 604800 navigation %}
+                        {% for item in navigation.menu_items.all %}
+                            <li>
+                                <a href="{{ item.link }}" class="nav-link"{% if item.open_in_new_tab %} target="_blank"{% endif %}>{{ item.title }}</a>
+                            </li>
+                        {% endfor %}
+                    {% endcache % }
+                </ul>
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="/blog/">Blog</a>
                     </li>
                     <li class="nav-item">
@@ -57,8 +65,8 @@
                     <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
                     <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery</a></li>
                     <li class="nav-item"><a href="event.html" class="nav-link">Events</a></li>
-                    <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
-                </ul>
+                    <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li> -->  
+                
                 <!--
               <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="text" placeholder="Search">
