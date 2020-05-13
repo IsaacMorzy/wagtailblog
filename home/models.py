@@ -3,6 +3,7 @@ from django.shortcuts import render
 
 from modelcluster.fields import ParentalKey
 
+from wagtail.api import APIField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     MultiFieldPanel,
@@ -83,6 +84,14 @@ class HomePage(RoutablePageMixin, Page):
         on_delete=models.SET_NULL,
         related_name="+",
     )
+    content = StreamField([("cta", blocks.CTABlock())], null=True, blank=True)
+
+    api_fields = [
+        APIField("banner_title"),
+        APIField("banner_subtitle"),
+        APIField("banner_image"),
+        APIField("banner_cta"),
+    ]
   
     content = StreamField(
         [
@@ -101,7 +110,7 @@ class HomePage(RoutablePageMixin, Page):
         null=True,
         blank=True,
     )
- 
+    
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
